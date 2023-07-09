@@ -1,0 +1,35 @@
+# Create an upstream to register OpenAI API backend for APISIX
+upstreams:
+  - id: 1
+    name: "OpenAI API upstream"
+    desc: "Register Conferences API as the upstream"
+    # OpenAI API requires URL scheme HTTPS for the connection
+    scheme: https
+    # Use the original host when the request is forwarded to the upstream.
+    pass_host: node
+    nodes:
+      "api.openai.com:443": 1
+routes:
+  - uri: /ask-me-anything
+    name: "OpenAI API completion route"
+    desc: "Create a new route in APISIX for the OpenAI API completion endpoint"
+    methods: ["POST"]
+    upstream_id: 1
+    plugins:
+      proxy-rewrite:
+        uri: /v1/chat/completions
+        headers:
+            Authorization: Bearer OPENAI_API_KEY
+            Content-Type: application/json
+      jwt-auth: {}
+  - uri: /login
+    plugins:
+      public-api:
+        uri: /apisix/plugin/jwt/sign
+consumers:
+  - username: appsmithuser
+    plugins:
+        jwt-auth:
+            key: appsmithuser@gmail.com
+            secret: my-secret-key        
+#END
