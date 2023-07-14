@@ -32,4 +32,3 @@ build/
 ### VS Code ###
 .vscode/
 apisix_log
-test-curl-cmds.sh

@@ -19,9 +19,16 @@ routes:
       proxy-rewrite:
         uri: /v1/chat/completions
         headers:
-            Authorization: Bearer OPENAI_API_KEY
+            Authorization: Bearer {YOUR_OPENAI_API_KEY}
             Content-Type: application/json
-      jwt-auth: {}
+      jwt-auth: {},
+      limit-count:
+        count: 2
+        time_window: 60
+        rejected_code: 403
+        rejected_msg: "Requests are too frequent, please try again later."
+        key_type: "var"
+        key: "remote_addr"
   - uri: /login
     plugins:
       public-api:
